@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Black&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lobster&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+<body class="blue-grey">
+    <nav>
+        <div class="nav-wrapper blue-grey darken-2" style="font-family: 'Archivo Black', sans-serif; padding:5px;">
+            <a class="brand-logo white-text">THE MOVIES ZONE</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#yo" class="white-text">DESIGNER</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="app">
+        <div class="card-panel" v-if="estado">
+            <div class="progress">
+                <div class="indeterminate"></div>
+            </div>
+        </div>
+
+        <div class="row" v-if="!estado">
+            <div v-for="item in movies">
+                <div class="col l3">
+                    <div class="card-panel center grey lighten-2">
+                        <img :src="url_img + item.poster_path" height="250" class="z-depth-2"><br>
+                        <p style="font-family: 'Lobster', cursive;">
+                            {{item.title}}
+                        </p>
+                        <button @click="ver_modal(item)" class="btn-floating blue-grey">INFO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal1" class="modal">
+            <div v-if="peli != null">
+                <div class="modal-content">
+                    <h3 style="font-family: 'Lobster', cursive;">{{peli.title}}</h3>
+                    <img :src="url_img + peli.poster_path" height="250" class="z-depth-2"><br>
+                    <div>Fecha de Estreno: {{peli.release_date}}</div>
+                    <div>Sinopsi: {{peli.overview}}</div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">VOLVER</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer blue-grey">
+            <div id="yo" class="container blue-grey">
+              <div class="row">
+                <div class="col l6 s12">
+                  <h5 class="white-text">Diseñador</h5>
+                  <p class="grey-text text-lighten-4">Mi nombre es Felipe Contreras y he diseñado esta página</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                  <img src="img/felipe.jpeg" height="220">
+                </div>
+              </div>
+            </div>
+            <div class="footer-copyright">
+              <div class="container">
+              © 2019 Copyright Design
+              </div>
+            </div>
+          </footer>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                estado: true,
+                movies: [],
+                url: 'https://api.themoviedb.org/3/movie/popular?api_key=13cba8e798cc998028dbb054c8b15094&language=es-ES&page=1',
+                url_img: 'https://image.tmdb.org/t/p/w500',
+                peli:null
+            },
+            methods: {
+                async cargar() {
+                    var resultado = await axios.get(this.url);
+                    this.movies = resultado.data.results;
+                    console.log(resultado.data);
+                    this.estado = false;
+                },
+                ver_modal(item){
+                    this.peli = item;
+                    var instance = M.Modal.getInstance(document.getElementById('modal1'));    
+                    instance.open();
+                }
+            },
+            created() {
+                this.cargar();
+            },
+            mounted() {
+                document.addEventListener('DOMContentLoaded', function () {
+                    var elems = document.querySelectorAll('.modal');
+                    var instances = M.Modal.init(elems);
+                });
+            }
+
+        });
+    </script>
+</body>
+
+</html>
